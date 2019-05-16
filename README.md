@@ -21,6 +21,11 @@ By default, this compiles a version expecting to run as a Lambda layer from `/op
 
 The default Docker image used is `lambci/lambda-base-2:build`. To use a different base, provide a `DOCKER_IMAGE` variable when invoking `make`.
 
+### Experimenting
+
+* `make bash` to open an interactive shell with all the build directories mounted
+* `make libs` to make only the libraries, useful to test building additional libraries without building ImageMagick itself
+
 ## Bundled libraries
 
 This is not a full-blown ImageMagick setup you can expect on a regular Linux box, it's a slimmed down version to save space that works with the most common formats. You can add more formats by including another library into the build process in [`src/Makefile`](src/Makefile).
@@ -29,6 +34,7 @@ This is not a full-blown ImageMagick setup you can expect on a regular Linux box
 * libtiff
 * libjpeg
 * openjpeg2
+* libwebp
 
 ## Info on scripts
 
