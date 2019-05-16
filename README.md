@@ -13,7 +13,7 @@ Amazon Linux 2 instances for Lambda no longer contain system utilities, so `conv
 
 * `make all`
 
-The `Makefile` in the root directory just starts a Docker container matching the AWS Linux 2 environment for Lambda runtimes, and compiles a static version of ImageMagick tools. They will be in the `result` dir. 
+The `Makefile` in the root directory just starts a Docker container matching the AWS Linux 2 environment for Lambda runtimes, and compiles a static version of ImageMagick tools using the [`src/Makefile`](src/Makefile) running inside the container. They will be in the `result` dir. 
 
 ### Configuring the build
 
@@ -24,6 +24,7 @@ The default Docker image used is `lambci/lambda-base-2:build`. To use a differen
 ## Bundled libraries
 
 This is not a full-blown ImageMagick setup you can expect on a regular Linux box, it's a slimmed down version to save space that works with the most common formats. You can add more formats by including another library into the build process in [`src/Makefile`](src/Makefile).
+
 * libpng
 * libtiff
 * libjpeg
