@@ -1,8 +1,7 @@
 PROJECT_ROOT = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
 DOCKER_IMAGE ?= lambci/lambda-base-2:build
-
-TARGET=/opt/imagemagick
+TARGET ?=/opt/imagemagick
 
 MOUNTS = -v $(PROJECT_ROOT):/var/task \
 	-v $(PROJECT_ROOT)result:$(TARGET)

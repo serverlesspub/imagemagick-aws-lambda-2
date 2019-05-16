@@ -1,6 +1,6 @@
-# ImageMagick for AWS Lambda (Amazon Linux 2)
+# ImageMagick for AWS Lambda
 
-Scripts to compile ImageMagick utilities for AWS Lambda instances powered by Amazon Linux 2.x, such as the `nodejs10.x` runtime.
+Scripts to compile ImageMagick utilities for AWS Lambda instances powered by Amazon Linux 2.x, such as the `nodejs10.x` runtime, and the updated 2018.03 Amazon Linux 1 runtimes. 
 
 Amazon Linux 2 instances for Lambda no longer contain system utilities, so `convert`, `mogrify` and `identify` from the [ImageMagick](https://imagemagick.org) package are no longer available. 
 
@@ -13,7 +13,13 @@ Amazon Linux 2 instances for Lambda no longer contain system utilities, so `conv
 
 * `make all`
 
-The `Makefile` in the root directory just starts a Docker container matching the AWS Linux 2 environment for Lambda runtimes, and compiles a static version of ImageMagick tools. They will be in the `result` dir. By default, this compiles a version expecting to run as a Lambda layer from `/opt/imagemagick` (you can change the expected location in the [`Makefile`](Makefile)).
+The `Makefile` in the root directory just starts a Docker container matching the AWS Linux 2 environment for Lambda runtimes, and compiles a static version of ImageMagick tools. They will be in the `result` dir. 
+
+### Configuring the build
+
+By default, this compiles a version expecting to run as a Lambda layer from `/opt/imagemagick`. You can change the expected location by providing a `TARGET` variable when invoking `make`.
+
+The default Docker image used is `lambci/lambda-base-2:build`. To use a different base, provide a `DOCKER_IMAGE` variable when invoking `make`.
 
 ## Bundled libraries
 
