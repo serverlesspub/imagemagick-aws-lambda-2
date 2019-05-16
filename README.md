@@ -13,7 +13,7 @@ Amazon Linux 2 instances for Lambda no longer contain system utilities, so `conv
 
 * `make all`
 
-The `Makefile` in the root directory just starts a Docker container matching the AWS Linux 2 environment for Lambda runtimes, and compiles a static version of ImageMagick tools. They will be in the `result` dir. By default, this compiles a version expecting to run as a Lambda layer from `/opt/imagemagick` (you can change the expected location in the (`Makefile`)[Makefile].
+The `Makefile` in the root directory just starts a Docker container matching the AWS Linux 2 environment for Lambda runtimes, and compiles a static version of ImageMagick tools. They will be in the `result` dir. By default, this compiles a version expecting to run as a Lambda layer from `/opt/imagemagick` (you can change the expected location in the (`Makefile`)[Makefile]).
 
 ## Bundled libraries
 
