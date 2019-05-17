@@ -23,7 +23,7 @@ The output will be in the `result` dir.
 
 ### Configuring the build
 
-By default, this compiles a version expecting to run as a Lambda layer from `/opt/imagemagick`. You can change the expected location by providing a `TARGET` variable when invoking `make`.
+By default, this compiles a version expecting to run as a Lambda layer from `/opt`. You can change the expected location by providing a `TARGET` variable when invoking `make`.
 
 The default Docker image used is `lambci/lambda-base-2:build`. To use a different base, provide a `DOCKER_IMAGE` variable when invoking `make`.
 
