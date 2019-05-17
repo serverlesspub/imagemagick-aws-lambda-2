@@ -145,7 +145,8 @@ $(TARGET_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
 		--disable-docs \
 		--without-magick-plus-plus \
 		--without-perl \
-		--without-x
+		--without-x \
+		--disable-openmp
 	make clean
 	make all
 	make install

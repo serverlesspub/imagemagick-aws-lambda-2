@@ -8,6 +8,7 @@ Amazon Linux 2 instances for Lambda no longer contain system utilities, so `conv
 
 * Docker desktop
 * Unix Make environment
+* AWS command line utilities (just for deployment)
 
 ## Compiling the code
 
@@ -46,12 +47,26 @@ This is not a full-blown ImageMagick setup you can expect on a regular Linux box
 
 ## Deploying to AWS as a layer
 
-* `make deploy DEPLOYMENT_BUCKET=<YOUR BUCKET NAME>`
+Run the following command to deploy the compiled result as a layer in your AWS account.
+
+```
+make deploy DEPLOYMENT_BUCKET=<YOUR BUCKET NAME>
+```
 
 ### configuring the deployment
 
 By default, this uses imagemagick-layer as the stack name. Provide a `STACK_NAME` variable when
 calling `make deploy` to use an alternative name.
+
+### example usage
+
+An example project is in the [example](example) directory. It sets up two buckets, and listens to file uploads on the first bucket to convert and generate thumbnails, saving to the second bucket. You can deploy it from the root Makefile using:
+
+```
+make deploy-example DEPLOYMENT_BUCKET=<YOUR BUCKET NAME>
+```
+
+
 
 ## Info on scripts
 
