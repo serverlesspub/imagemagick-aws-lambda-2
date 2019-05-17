@@ -42,3 +42,7 @@ build/output.yaml: template.yaml build/layer.zip
 deploy: build/output.yaml
 	aws cloudformation deploy --template $< --stack-name $(STACK_NAME)
 	aws cloudformation describe-stacks --stack-name $(STACK_NAME) --query Stacks[].Outputs --output table
+
+deploy-example: deploy
+	cd example && \
+		make deploy DEPLOYMENT_BUCKET=$(DEPLOYMENT_BUCKET)
