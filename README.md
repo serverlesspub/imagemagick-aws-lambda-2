@@ -47,6 +47,8 @@ Modify the versions of libraries or ImageMagick directly in [`Makefile_ImageMagi
 
 This is not a full-blown ImageMagick setup you can expect on a regular Linux box, it's a slimmed down version to save space that works with the most common formats. You can add more formats by including another library into the build process in [`Makefile_ImageMagick`](Makefile_ImageMagick).
 
+These libraries are currently bundled:
+
 * libpng
 * libtiff
 * libjpeg
