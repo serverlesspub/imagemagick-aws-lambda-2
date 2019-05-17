@@ -1,0 +1,1 @@
+ImageMagick license, see https://imagemagick.org/script/license.php

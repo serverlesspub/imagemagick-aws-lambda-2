@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  Static build of ImageMagick for AWS Linux 2,
+  Static build of ImageMagick for Amazon Linux 2,
   including convert, mogrify and identify tools
   and support for jpeg, gif, png, tiff and webm formats.
 
@@ -23,3 +23,21 @@ Outputs:
   LayerVersion:
     Description: Layer ARN Reference
     Value: !Ref ImageMagickLayer
+
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: image-magick-lambda-layer
+    Description: >
+      Static build of ImageMagick for Amazon Linux 2,
+      packaged as a Lambda layer. Bundles ImageMagick 7.0.8-45.
+
+      Including convert, mogrify and identify tools
+      and support for jpeg, gif, png, tiff and webm formats.
+    Author: Gojko Adzic
+    SpdxLicenseId: ImageMagick
+    LicenseUrl: LICENSE.txt
+    ReadmeUrl: README-SAR.md 
+    Labels: ['layer', 'image', 'lambda', 'imagemagick']
+    HomePageUrl: https://github.com/serverlesspub/imagemagick-aws-lambda-2
+    SemanticVersion: 1.0.0
+    SourceCodeUrl: https://github.com/serverlesspub/imagemagick-aws-lambda-2
