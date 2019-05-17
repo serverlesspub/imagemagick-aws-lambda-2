@@ -45,4 +45,4 @@ deploy: build/output.yaml
 
 deploy-example: deploy
 	cd example && \
-		make deploy DEPLOYMENT_BUCKET=$(DEPLOYMENT_BUCKET)
+		make deploy DEPLOYMENT_BUCKET=$(DEPLOYMENT_BUCKET) IMAGE_MAGICK_STACK_NAME=$(STACK_NAME)
