@@ -11,13 +11,13 @@ TARGET_DIR ?= /opt/imagemagick
 .ONESHELL:
 
 CONFIGURE = PKG_CONFIG_PATH=$(TARGET_DIR)/lib/pkgconfig \
-			./configure \
-				CPPFLAGS=-I$(TARGET_DIR)/include \
-				LDFLAGS=-L$(TARGET_DIR)/lib \
-				--disable-dependency-tracking \
-				--disable-shared \
-				--enable-static \
-				--prefix=$(TARGET_DIR)
+	./configure \
+		CPPFLAGS=-I$(TARGET_DIR)/include \
+		LDFLAGS=-L$(TARGET_DIR)/lib \
+		--disable-dependency-tracking \
+		--disable-shared \
+		--enable-static \
+		--prefix=$(TARGET_DIR)
 
 ## libjpg
 
