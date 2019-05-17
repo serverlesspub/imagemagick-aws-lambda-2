@@ -1,0 +1,20 @@
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  ImageMagickLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: image-magick
+      Description: >
+
+        Static build of ImageMagick for AWS Linux 2,
+        including convert, mogrify and identify tools
+        and support for jpeg, gif, png, tiff and webm formats.
+
+        Check out https://github.com/serverlesspub/imagemagick-aws-lambda-2
+        for more information.
+
+      ContentUri: layer.zip
+      CompatibleRuntimes:
+        - nodejs10.x
+      LicenseInfo: https://imagemagick.org/script/license.php
+      RetentionPolicy: Retain

@@ -34,7 +34,7 @@ Modify the versions of libraries or ImageMagick directly in [`Makefile_ImageMagi
 * `make bash` to open an interactive shell with all the build directories mounted
 * `make libs` to make only the libraries, useful to test building additional libraries without building ImageMagick itself
 
-## Bundled libraries
+### Bundled libraries
 
 This is not a full-blown ImageMagick setup you can expect on a regular Linux box, it's a slimmed down version to save space that works with the most common formats. You can add more formats by including another library into the build process in [`Makefile_ImageMagick`](Makefile_ImageMagick).
 
@@ -43,6 +43,15 @@ This is not a full-blown ImageMagick setup you can expect on a regular Linux box
 * libjpeg
 * openjpeg2
 * libwebp
+
+## Deploying to AWS as a layer
+
+* `make deploy DEPLOYMENT_BUCKET=<YOUR BUCKET NAME>`
+
+### configuring the deployment
+
+By default, this uses imagemagick-layer as the stack name. Provide a `STACK_NAME` variable when
+calling `make deploy` to use an alternative name.
 
 ## Info on scripts
 

@@ -129,7 +129,7 @@ LIBS:=$(CACHE_DIR)/lib/libjpeg.a \
 	$(CACHE_DIR)/lib/libbz2.a \
 	$(CACHE_DIR)/lib/libwebp.a
 
-$(CACHE_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
+$(TARGET_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
 	tar xf $<
 	cd ImageMa*
 	PKG_CONFIG_PATH=$(CACHE_DIR)/lib/pkgconfig \
@@ -152,4 +152,4 @@ $(CACHE_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
 
 libs: $(LIBS)
 
-all: $(CACHE_DIR)/bin/identify
+all: $(TARGET_DIR)/bin/identify

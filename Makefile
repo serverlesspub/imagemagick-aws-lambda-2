@@ -21,3 +21,23 @@ bash:
 
 all libs: 
 	$(DOCKER) $(MOUNTS) --entrypoint /usr/bin/make -t $(DOCKER_IMAGE) TARGET_DIR=$(TARGET) -f ../Makefile_ImageMagick $@
+
+
+STACK_NAME ?= imagemagick-layer 
+
+result/bin/identify: all
+
+layer.zip: result/bin/identify
+	# imagemagick has a ton of symlinks, and just using the source dir in the template
+	# would cause all these to get packaged as individual files. 
+	# (https://github.com/aws/aws-cli/issues/2900) 
+	#
+	# This is why we zip outside, using -y to store them as symlinks
+	
+	cd result && zip -ry ../layer.zip *
+
+output.yaml: template.yaml result/bin/identify
+	aws cloudformation package --template $< --s3-bucket $(DEPLOYMENT_BUCKET) --output-template-file $@
+
+deploy: output.yaml
+	aws cloudformation deploy --template $< --stack-name $(STACK_NAME)
