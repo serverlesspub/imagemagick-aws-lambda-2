@@ -17,6 +17,7 @@ Resources:
       CompatibleRuntimes:
         - nodejs10.x
         - nodejs12.x
+        - python3.8
       LicenseInfo: https://imagemagick.org/script/license.php
       RetentionPolicy: Retain
 
