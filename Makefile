@@ -7,7 +7,17 @@ MOUNTS = -v $(PROJECT_ROOT):/var/task \
 	-v $(PROJECT_ROOT)result:$(TARGET)
 
 DOCKER = docker run -it --rm -w=/var/task/build
-build result: 
+
+DOCKER_MAKE_PARAMS = TARGET_DIR=$(TARGET) \
+	$(if $(LIBPNG_VERSION),LIBPNG_VERSION=$(LIBPNG_VERSION)) \
+	$(if $(LIBJPG_VERSION),LIBJPG_VERSION=$(LIBJPG_VERSION)) \
+	$(if $(OPENJP2_VERSION),OPENJP2_VERSION=$(OPENJP2_VERSION)) \
+	$(if $(LIBTIFF_VERSION),LIBTIFF_VERSION=$(LIBTIFF_VERSION)) \
+	$(if $(BZIP2_VERSION),BZIP2_VERSION=$(BZIP2_VERSION)) \
+	$(if $(LIBWEBP_VERSION),LIBWEBP_VERSION=$(LIBWEBP_VERSION)) \
+	$(if $(IMAGEMAGICK_VERSION),IMAGEMAGICK_VERSION=$(IMAGEMAGICK_VERSION))
+
+build result:
 	mkdir $@
 
 clean:
@@ -20,7 +30,7 @@ bash:
 	$(DOCKER) $(MOUNTS) --entrypoint /bin/bash -t $(DOCKER_IMAGE)
 
 all libs: 
-	$(DOCKER) $(MOUNTS) --entrypoint /usr/bin/make -t $(DOCKER_IMAGE) TARGET_DIR=$(TARGET) -f ../Makefile_ImageMagick $@
+	$(DOCKER) $(MOUNTS) --entrypoint /usr/bin/make -t $(DOCKER_IMAGE) $(DOCKER_MAKE_PARAMS) -f ../Makefile_ImageMagick $@
 
 
 STACK_NAME ?= imagemagick-layer 
