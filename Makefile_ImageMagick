@@ -26,7 +26,7 @@ CONFIGURE = PKG_CONFIG_PATH=$(CACHE_DIR)/lib/pkgconfig \
 LIBJPG_SOURCE=jpegsrc.v$(LIBJPG_VERSION).tar.gz
 
 $(LIBJPG_SOURCE):
-	curl -LO http://ijg.org/files/$(LIBJPG_SOURCE)
+	curl --fail -LO http://ijg.org/files/$(LIBJPG_SOURCE)
 
 $(CACHE_DIR)/lib/libjpeg.a: $(LIBJPG_SOURCE)
 	tar xf $<
@@ -41,7 +41,7 @@ $(CACHE_DIR)/lib/libjpeg.a: $(LIBJPG_SOURCE)
 LIBPNG_SOURCE=libpng-$(LIBPNG_VERSION).tar.xz
 
 $(LIBPNG_SOURCE):
-	curl -LO http://prdownloads.sourceforge.net/libpng/$(LIBPNG_SOURCE)
+	curl --fail -LO http://prdownloads.sourceforge.net/libpng/$(LIBPNG_SOURCE)
 
 $(CACHE_DIR)/lib/libpng.a: $(LIBPNG_SOURCE)
 	tar xf $<
@@ -55,7 +55,7 @@ $(CACHE_DIR)/lib/libpng.a: $(LIBPNG_SOURCE)
 BZIP2_SOURCE=bzip2-$(BZIP2_VERSION).tar.gz
 
 $(BZIP2_SOURCE):
-	curl -LO http://prdownloads.sourceforge.net/bzip2/bzip2-$(BZIP2_VERSION).tar.gz
+	curl --fail -LO http://prdownloads.sourceforge.net/bzip2/bzip2-$(BZIP2_VERSION).tar.gz
 
 $(CACHE_DIR)/lib/libbz2.a: $(BZIP2_SOURCE)
 	tar xf $<
@@ -68,7 +68,7 @@ $(CACHE_DIR)/lib/libbz2.a: $(BZIP2_SOURCE)
 LIBTIFF_SOURCE=tiff-$(LIBTIFF_VERSION).tar.gz
 
 $(LIBTIFF_SOURCE):
-	curl -LO http://download.osgeo.org/libtiff/$(LIBTIFF_SOURCE)
+	curl --fail -LO http://download.osgeo.org/libtiff/$(LIBTIFF_SOURCE)
 
 $(CACHE_DIR)/lib/libtiff.a: $(LIBTIFF_SOURCE) $(CACHE_DIR)/lib/libjpeg.a
 	tar xf $<
@@ -82,7 +82,7 @@ $(CACHE_DIR)/lib/libtiff.a: $(LIBTIFF_SOURCE) $(CACHE_DIR)/lib/libjpeg.a
 LIBWEBP_SOURCE=libwebp-$(LIBWEBP_VERSION).tar.gz
 
 $(LIBWEBP_SOURCE):
-	curl -L https://github.com/webmproject/libwebp/archive/v$(LIBWEBP_VERSION).tar.gz -o $(LIBWEBP_SOURCE)
+	curl --fail -L https://github.com/webmproject/libwebp/archive/v$(LIBWEBP_VERSION).tar.gz -o $(LIBWEBP_SOURCE)
 	
 $(CACHE_DIR)/lib/libwebp.a: $(LIBWEBP_SOURCE)
 	tar xf $<
@@ -97,7 +97,7 @@ $(CACHE_DIR)/lib/libwebp.a: $(LIBWEBP_SOURCE)
 OPENJP2_SOURCE=openjp2-$(OPENJP2_VERSION).tar.gz
 
 $(OPENJP2_SOURCE):
-	curl -L https://github.com/uclouvain/openjpeg/archive/v$(OPENJP2_VERSION).tar.gz -o $(OPENJP2_SOURCE)
+	curl --fail -L https://github.com/uclouvain/openjpeg/archive/v$(OPENJP2_VERSION).tar.gz -o $(OPENJP2_SOURCE)
 
 
 $(CACHE_DIR)/lib/libopenjp2.a: $(OPENJP2_SOURCE) $(CACHE_DIR)/lib/libpng.a $(CACHE_DIR)/lib/libtiff.a
@@ -119,7 +119,7 @@ $(CACHE_DIR)/lib/libopenjp2.a: $(OPENJP2_SOURCE) $(CACHE_DIR)/lib/libpng.a $(CAC
 IMAGE_MAGICK_SOURCE=ImageMagick-$(IMAGEMAGICK_VERSION).tar.gz
 
 $(IMAGE_MAGICK_SOURCE):
-	curl -L https://github.com/ImageMagick/ImageMagick/archive/$(IMAGEMAGICK_VERSION).tar.gz -o $(IMAGE_MAGICK_SOURCE)
+	curl --fail -L https://github.com/ImageMagick/ImageMagick/archive/$(IMAGEMAGICK_VERSION).tar.gz -o $(IMAGE_MAGICK_SOURCE)
 
 
 LIBS:=$(CACHE_DIR)/lib/libjpeg.a \
