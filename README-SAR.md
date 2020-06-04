@@ -2,7 +2,7 @@
 
 Static build of ImageMagick for Amazon Linux 2, packaged as a Lambda layer. 
 Bundles ImageMagick 7.0.8-45, including convert, mogrify and identify tools
-and support for jpeg, gif, png, tiff and webm formats.
+and support for jpeg, gif, png, tiff and webm formats and freetype font engine.
 
 This application provides a single output, `LayerVersion`, which points to a
 Lambda Layer ARN you can use with Lambda runtimes based on Amazon Linux 2 (such
