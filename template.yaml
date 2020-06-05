@@ -3,7 +3,8 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   Static build of ImageMagick for Amazon Linux 2,
   including convert, mogrify and identify tools
-  and support for jpeg, gif, png, tiff and webm formats.
+  and support for jpeg, gif, png, tiff and webm formats
+  and freetype font engine.
 
   Check out https://github.com/serverlesspub/imagemagick-aws-lambda-2
   for more information.
@@ -34,7 +35,8 @@ Metadata:
       packaged as a Lambda layer. Bundles ImageMagick 7.0.8-45.
 
       Including convert, mogrify and identify tools
-      and support for jpeg, gif, png, tiff and webm formats.
+      and support for jpeg, gif, png, tiff and webm formats
+      and freetype font engine.
     Author: Gojko Adzic
     SpdxLicenseId: ImageMagick
     LicenseUrl: LICENSE.txt

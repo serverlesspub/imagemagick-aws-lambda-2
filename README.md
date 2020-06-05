@@ -54,6 +54,7 @@ These libraries are currently bundled:
 * libjpeg
 * openjpeg2
 * libwebp
+* libfreetype
 
 ## Deploying to AWS as a layer
 
