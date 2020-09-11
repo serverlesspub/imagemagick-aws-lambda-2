@@ -4,7 +4,7 @@ OPENJP2_VERSION ?= 2.3.1
 LIBTIFF_VERSION ?= 4.0.9
 BZIP2_VERSION ?= 1.0.6
 LIBWEBP_VERSION ?= 0.6.1
-IMAGEMAGICK_VERSION ?= 7.0.8-45
+IMAGEMAGICK_VERSION ?= 7.0.10-29
 
 TARGET_DIR ?= /opt/
 PROJECT_ROOT = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
@@ -31,7 +31,7 @@ $(LIBJPG_SOURCE):
 $(CACHE_DIR)/lib/libjpeg.a: $(LIBJPG_SOURCE)
 	tar xf $<
 	cd jpeg*
-	$(CONFIGURE)	 
+	$(CONFIGURE)
 	make
 	make install
 
@@ -46,7 +46,7 @@ $(LIBPNG_SOURCE):
 $(CACHE_DIR)/lib/libpng.a: $(LIBPNG_SOURCE)
 	tar xf $<
 	cd libpng*
-	$(CONFIGURE)	 
+	$(CONFIGURE)
 	make
 	make install
 
@@ -73,7 +73,7 @@ $(LIBTIFF_SOURCE):
 $(CACHE_DIR)/lib/libtiff.a: $(LIBTIFF_SOURCE) $(CACHE_DIR)/lib/libjpeg.a
 	tar xf $<
 	cd tiff-*
-	$(CONFIGURE)	 
+	$(CONFIGURE)
 	make
 	make install
 
@@ -83,12 +83,12 @@ LIBWEBP_SOURCE=libwebp-$(LIBWEBP_VERSION).tar.gz
 
 $(LIBWEBP_SOURCE):
 	curl -L https://github.com/webmproject/libwebp/archive/v$(LIBWEBP_VERSION).tar.gz -o $(LIBWEBP_SOURCE)
-	
+
 $(CACHE_DIR)/lib/libwebp.a: $(LIBWEBP_SOURCE)
 	tar xf $<
 	cd libwebp-*
 	sh autogen.sh
-	$(CONFIGURE)	 
+	$(CONFIGURE)
 	make
 	make install
 
@@ -104,7 +104,7 @@ $(CACHE_DIR)/lib/libopenjp2.a: $(OPENJP2_SOURCE) $(CACHE_DIR)/lib/libpng.a $(CAC
 	tar xf $<
 	cd openjpeg-*
 	mkdir -p build
-	cd build 
+	cd build
 	PKG_CONFIG_PATH=$(CACHE_DIR)/lib/pkgconfig cmake .. \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DCMAKE_INSTALL_PREFIX=$(CACHE_DIR) \
