@@ -4,7 +4,22 @@ OPENJP2_VERSION ?= 2.3.1
 LIBTIFF_VERSION ?= 4.0.9
 BZIP2_VERSION ?= 1.0.6
 LIBWEBP_VERSION ?= 0.6.1
-IMAGEMAGICK_VERSION ?= 7.0.10-29
+IMAGEMAGICK_VERSION ?= 7.0.10-30
+
+UTIL_LINUX_VERSION ?= 2.33
+LIBJPEG_VERSION ?= 9c
+LIBXML2_VERSION ?= 2.9.9
+GLIB_VERSION ?= 2.58.3
+CAIRO_VERSION ?= 1.14.8
+LIBCROCO_VERSION ?= 0.6.8
+PANGO_VERSION ?= 1.28.4
+GDK_PIXBUF_VERSION ?= 2.28.2
+LIBFFI_VERSION ?= 3.2.1
+LIBRSVG_VERSION ?= 2.26.3
+PIXMAN_VERSION ?= 0.38.4
+FONTCONFIG_VERSION ?= 2.13.0
+FREETYPE_VERSION ?= 2.10.0
+HARFBUZZ_VERSION ?= 2.4.0
 
 TARGET_DIR ?= /opt/
 PROJECT_ROOT = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
@@ -20,6 +35,63 @@ CONFIGURE = PKG_CONFIG_PATH=$(CACHE_DIR)/lib/pkgconfig \
 		--disable-shared \
 		--enable-static \
 		--prefix=$(CACHE_DIR)
+
+## dev tool istallation
+init:
+	yum install -y gcc gcc-c++ cmake3 intltool flex bison shared-mime-info gperf
+
+## ============== begin new 1 ==========
+## util-linux has libmount and libuuid etc
+
+LIBUUID=$(CACHE_DIR)/lib/libuuid.a
+
+UTIL_LINUX_SOURCE=util-linux-$(UTIL_LINUX_VERSION).tar.xz
+$(UTIL_LINUX_SOURCE):
+	curl -LO https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v$(UTIL_LINUX_VERSION)/$(UTIL_LINUX_SOURCE)
+
+$(LIBUUID): $(UTIL_LINUX_SOURCE)
+	tar xf $<
+	cd util-linux*
+	$(CONFIGURE) \
+		--disable-all-programs \
+		--enable-libuuid
+	make
+	make install
+
+## libxml2
+
+LIBXML2_SOURCE=libxml2-$(LIBXML2_VERSION).tar.gz
+LIBXML2=$(CACHE_DIR)/lib/libxml2.a
+$(LIBXML2_SOURCE):
+	curl -LO ftp://xmlsoft.org/libxml2/$(LIBXML2_SOURCE)
+
+$(LIBXML2): $(LIBXML2_SOURCE)
+	tar xf $<
+	cd libxml2*
+	$(CONFIGURE) \
+		--without-history \
+		--without-python
+	make
+	make install
+
+## licroco
+
+LIBCROCO_SOURCE=libcroco-$(LIBCROCO_VERSION).tar.xz
+LIBCROCO_MINOR_VERSION=$(basename $(LIBCROCO_VERSION))
+LIBCROCO=$(CACHE_DIR)/lib/libcroco-$(LIBCROCO_MINOR_VERSION).a
+
+$(LIBCROCO_SOURCE):
+	curl -OL http://ftp.gnome.org/pub/GNOME/sources/libcroco/$(LIBCROCO_MINOR_VERSION)/$(LIBCROCO_SOURCE)
+
+$(LIBCROCO): $(LIBCROCO_SOURCE) $(LIBXML2) $(GLIB)
+	tar xf $<
+	cd libcroco*
+	$(CONFIGURE) \
+		--disable-gtk-doc \
+		--disable-gtk-doc-html
+	make
+	make install
+## ============== end new 1 ============
 
 ## libjpg
 
@@ -114,6 +186,67 @@ $(CACHE_DIR)/lib/libopenjp2.a: $(OPENJP2_SOURCE) $(CACHE_DIR)/lib/libpng.a $(CAC
 	make install
 
 
+## =============== begin new ===================
+
+FREETYPE_SOURCE=freetype-$(FREETYPE_VERSION).tar.gz
+LIBFREETYPE=$(CACHE_DIR)/lib/libfreetype.a
+HARFBUZZ_SOURCE=harfbuzz-$(HARFBUZZ_VERSION).tar.bz2
+LIBHARFBUZZ=$(CACHE_DIR)/lib/libharfbuzz.a
+
+$(FREETYPE_SOURCE):
+	curl -LO https://download.savannah.gnu.org/releases/freetype/$(FREETYPE_SOURCE)
+
+$(HARFBUZZ_SOURCE):
+	curl -LO https://www.freedesktop.org/software/harfbuzz/release/$(HARFBUZZ_SOURCE)
+
+FT_WITHOUT_HB_DIR=$(PROJECT_ROOT)build/freetype-$(FREETYPE_VERSION)-without-harfbuzz
+FT_WITHOUT_HB=$(FT_WITHOUT_HB_DIR)/objs/.libs/libfreetype.a
+
+$(FT_WITHOUT_HB): $(FREETYPE_SOURCE)
+	tar xf $< -C /tmp
+	rm -rf $(FT_WITHOUT_HB_DIR)
+	mv /tmp/freetype-$(FREETYPE_VERSION) $(FT_WITHOUT_HB_DIR)
+	cd $(FT_WITHOUT_HB_DIR)
+	$(CONFIGURE) --without-harfbuzz
+	make
+	make install
+
+$(LIBHARFBUZZ): $(HARFBUZZ_SOURCE) $(FT_WITHOUT_HB)
+	tar xf $<
+	cd harfbuzz-$(HARFBUZZ_VERSION)
+	$(CONFIGURE) \
+		--with-freetype
+	make
+	make install
+
+$(LIBFREETYPE): $(FREETYPE_SOURCE) $(GLIB) $(LIBPNG) $(LIBBZ2) $(LIBHARFBUZZ)
+	tar xf $<
+	cd freetype-$(FREETYPE_VERSION)
+	$(CONFIGURE) \
+		--with-harfbuzz \
+		--with-png \
+		--with-bzip2
+	yum install -y gperf
+	make distclean clean
+	make
+	make install
+
+## fontconfig
+
+FONTCONFIG_SOURCE=fontconfig-$(FONTCONFIG_VERSION).tar.bz2
+LIBFONTCONFIG=$(CACHE_DIR)/lib/libfontconfig.a
+
+$(FONTCONFIG_SOURCE):
+	curl -LO https://www.freedesktop.org/software/fontconfig/release/$(FONTCONFIG_SOURCE)
+
+fontconfig $(LIBFONTCONFIG): $(FONTCONFIG_SOURCE) $(LIBXML2) $(LIBFREETYPE) $(LIBUUID)
+	tar xf $<
+	cd fontconfig-$(FONTCONFIG_VERSION)
+	$(CONFIGURE) --enable-libxml2
+	make
+	make install
+
+## =============== end new =====================
 ## ImageMagick
 
 IMAGE_MAGICK_SOURCE=ImageMagick-$(IMAGEMAGICK_VERSION).tar.gz
@@ -127,7 +260,11 @@ LIBS:=$(CACHE_DIR)/lib/libjpeg.a \
 	$(CACHE_DIR)/lib/libopenjp2.a \
 	$(CACHE_DIR)/lib/libtiff.a \
 	$(CACHE_DIR)/lib/libbz2.a \
-	$(CACHE_DIR)/lib/libwebp.a
+	$(CACHE_DIR)/lib/libwebp.a \
+	$(CACHE_DIR)/lib/libuuid.a \
+	$(CACHE_DIR)/lib/libfreetype.a \
+	$(CACHE_DIR)/lib/libharfbuzz.a \
+	$(CACHE_DIR)/lib/libfontconfig.a
 
 $(TARGET_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
 	tar xf $<
