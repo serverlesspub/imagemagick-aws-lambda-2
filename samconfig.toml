@@ -1,0 +1,11 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "lambda-layer-imagemagick"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1j9bww4bw1osm"
+s3_prefix = "lambda-layer-imagemagick"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+

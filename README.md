@@ -1,8 +1,8 @@
 # ImageMagick for AWS Lambda
 
-Scripts to compile ImageMagick utilities for AWS Lambda instances powered by Amazon Linux 2.x, such as the `nodejs10.x` or `nodejs12.x` or `python 3.8` runtime, and the updated 2018.03 Amazon Linux 1 runtimes. 
+Scripts to compile ImageMagick utilities for AWS Lambda instances powered by Amazon Linux 2.x, such as the `nodejs10.x` or `nodejs12.x` or `python 3.8` runtime, and the updated 2018.03 Amazon Linux 1 runtimes.
 
-Amazon Linux 2 instances for Lambda no longer contain system utilities, so `convert`, `mogrify` and `identify` from the [ImageMagick](https://imagemagick.org) package are no longer available. 
+Amazon Linux 2 instances for Lambda no longer contain system utilities, so `convert`, `mogrify` and `identify` from the [ImageMagick](https://imagemagick.org) package are no longer available.
 
 ## Usage
 
@@ -26,13 +26,13 @@ For manual deployments and custom builds, read below...
 There are two `make` scripts in this project.
 
 * [`Makefile`](Makefile) is intended to run on the build system, and just starts a Docker container matching the AWS Linux 2 environment for Lambda runtimes to compile ImageMagick using the second script.
-* [`Makefile_ImageMagick`](Makefile_ImageMagick) is the script that will run inside the container, and actually compile binaries. 
+* [`Makefile_ImageMagick`](Makefile_ImageMagick) is the script that will run inside the container, and actually compile binaries.
 
-The output will be in the `result` dir.
+The output will be fn the `imagemagick` dir.
 
 ### Configuring the build
 
-By default, this compiles a version expecting to run as a Lambda layer from `/opt`. You can change the expected location by providing a `TARGET` variable when invoking `make`.
+By default, this compiles a version expecting to run as a Lambda layer from `/opt/imagemagick`. You can change the expected location by providing a `TARGET` variable when invoking `make`.
 
 The default Docker image used is `lambci/lambda-base-2:build`. To use a different base, provide a `DOCKER_IMAGE` variable when invoking `make`.
 
@@ -54,28 +54,21 @@ These libraries are currently bundled:
 * libjpeg
 * openjpeg2
 * libwebp
+* bzip2
+* libfreetype
 
 ## Deploying to AWS as a layer
 
-Run the following command to deploy the compiled result as a layer in your AWS account.
+Run the following command to deploy the compiled result as a layer. This will create a new layer and leave existing layers intack despite the scary looking Cloudformation message.
 
 ```
-make deploy DEPLOYMENT_BUCKET=<YOUR BUCKET NAME>
+make deploy
 ```
 
 ### configuring the deployment
 
 By default, this uses imagemagick-layer as the stack name. Provide a `STACK_NAME` variable when
 calling `make deploy` to use an alternative name.
-
-### example usage
-
-An example project is in the [example](example) directory. It sets up two buckets, and listens to file uploads on the first bucket to convert and generate thumbnails, saving to the second bucket. You can deploy it from the root Makefile using:
-
-```
-make deploy-example DEPLOYMENT_BUCKET=<YOUR BUCKET NAME>
-```
-
 
 
 ## Info on scripts

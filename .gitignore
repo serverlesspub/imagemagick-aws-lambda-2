@@ -2,4 +2,5 @@ build
 result
 .samcli
 layer.zip
+imagemagick
 output.yaml

@@ -8,10 +8,10 @@ Resources:
     Properties:
       LayerName: ImageMagickLayer
       Description: Imagemagick 7
-      ContentUri: "./layer.zip"
+      ContentUri: "./build/layer.zip"
       CompatibleRuntimes:
-      - provided.al2
-      - python3.8
+        - provided.al2
+        - python3.8
         - nodejs10.x
         - nodejs12.x
         - ruby2.7
