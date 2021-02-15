@@ -4,7 +4,11 @@ OPENJP2_VERSION ?= 2.3.1
 LIBTIFF_VERSION ?= 4.0.9
 BZIP2_VERSION ?= 1.0.6
 LIBWEBP_VERSION ?= 0.6.1
-IMAGEMAGICK_VERSION ?= 7.0.8-45
+LIBCMS_VERSION ?= 2.8
+LIBXML_VERSION ?= 2.9.6
+IMAGEMAGICK_VERSION ?= 7.0.10-62
+
+
 
 TARGET_DIR ?= /opt/
 PROJECT_ROOT = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
@@ -46,7 +50,7 @@ $(LIBPNG_SOURCE):
 $(CACHE_DIR)/lib/libpng.a: $(LIBPNG_SOURCE)
 	tar xf $<
 	cd libpng*
-	$(CONFIGURE)	 
+	$(CONFIGURE)
 	make
 	make install
 
@@ -61,6 +65,31 @@ $(CACHE_DIR)/lib/libbz2.a: $(BZIP2_SOURCE)
 	tar xf $<
 	cd bzip2-*
 	make libbz2.a
+	make install PREFIX=$(CACHE_DIR)
+
+LIBCMS_SOURCE=lcms2-$(LIBCMS_VERSION).tar.gz
+
+$(LIBCMS_SOURCE):
+	curl -LO https://download.imagemagick.org/ImageMagick/download/delegates/$(LIBCMS_SOURCE)
+
+$(CACHE_DIR)/lib/liblcms2.a: $(LIBCMS_SOURCE)
+	tar xf $<
+	cd lcms2*
+	$(CONFIGURE)
+	make
+	make install
+	
+
+LIBXML_SOURCE=libxml2-$(LIBXML_VERSION).tar.gz
+
+$(LIBXML_SOURCE):
+	curl -LO https://download.imagemagick.org/ImageMagick/download/delegates/$(LIBXML_SOURCE)
+
+$(CACHE_DIR)/lib/libxml2.a: $(LIBXML_SOURCE)
+	tar xf $<
+	cd libxml2*
+	$(CONFIGURE)	 
+	make
 	make install PREFIX=$(CACHE_DIR)
 
 # libtiff
@@ -122,16 +151,20 @@ $(IMAGE_MAGICK_SOURCE):
 	curl -L https://github.com/ImageMagick/ImageMagick/archive/$(IMAGEMAGICK_VERSION).tar.gz -o $(IMAGE_MAGICK_SOURCE)
 
 
+
 LIBS:=$(CACHE_DIR)/lib/libjpeg.a \
 	$(CACHE_DIR)/lib/libpng.a \
 	$(CACHE_DIR)/lib/libopenjp2.a \
 	$(CACHE_DIR)/lib/libtiff.a \
 	$(CACHE_DIR)/lib/libbz2.a \
-	$(CACHE_DIR)/lib/libwebp.a
+	$(CACHE_DIR)/lib/libwebp.a \
+	$(CACHE_DIR)/lib/libxml2.a \
+	$(CACHE_DIR)/lib/liblcms2.a
 
 $(TARGET_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
 	tar xf $<
 	cd ImageMa*
+	PCFLAGS="-fopenmp -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16 -static" \
 	PKG_CONFIG_PATH=$(CACHE_DIR)/lib/pkgconfig \
 		./configure \
 		CPPFLAGS=-I$(CACHE_DIR)/include \
@@ -146,6 +179,13 @@ $(TARGET_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
 		--without-magick-plus-plus \
 		--without-perl \
 		--without-x \
+		--with-xml \
+		--with-x=no \
+		--with-gslib=no \
+		--without-dps \
+		--disable-hdri \
+		--with-lcms=yes	\
+		--with-quantum-depth=8 \
 		--disable-openmp
 	make clean
 	make all
@@ -154,3 +194,4 @@ $(TARGET_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
 libs: $(LIBS)
 
 all: $(TARGET_DIR)/bin/identify
+
