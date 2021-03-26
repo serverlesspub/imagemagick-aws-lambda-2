@@ -5,6 +5,9 @@ LIBTIFF_VERSION ?= 4.0.9
 BZIP2_VERSION ?= 1.0.6
 LIBWEBP_VERSION ?= 0.6.1
 IMAGEMAGICK_VERSION ?= 7.0.8-45
+LIBHEIF_VERSION ?= 1.6.1
+LIBDE265_VERSION ?= 1.0.5
+LCMS_VERSION ?= 2.12
 
 TARGET_DIR ?= /opt/
 PROJECT_ROOT = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
@@ -21,8 +24,35 @@ CONFIGURE = PKG_CONFIG_PATH=$(CACHE_DIR)/lib/pkgconfig \
 		--enable-static \
 		--prefix=$(CACHE_DIR)
 
-## libjpg
+## libde265
+LIBDE265_SOURCE=libde265-$(LIBDE265_VERSION).tar.gz
 
+$(LIBDE265_SOURCE):
+	curl -LO https://github.com/strukturag/libde265/releases/download/v$(LIBDE265_VERSION)/$(LIBDE265_SOURCE)
+	
+$(CACHE_DIR)/lib/libde265.a: $(LIBDE265_SOURCE)
+	tar xf $<
+	cd libde265*
+	./autogen.sh
+	$(CONFIGURE)
+	make
+	make install
+
+## libheic
+LIBHEIF_SOURCE=libheif-$(LIBHEIF_VERSION).tar.gz
+
+$(LIBHEIF_SOURCE):
+	curl -LO https://github.com/strukturag/libheif/releases/download/v$(LIBHEIF_VERSION)/$(LIBHEIF_SOURCE)
+
+$(CACHE_DIR)/lib/libheif.a: $(LIBHEIF_SOURCE)
+	tar xf $<
+	cd libheif*
+	./autogen.sh
+	$(CONFIGURE)
+	make
+	make install
+
+## libjpg
 LIBJPG_SOURCE=jpegsrc.v$(LIBJPG_VERSION).tar.gz
 
 $(LIBJPG_SOURCE):
@@ -92,6 +122,20 @@ $(CACHE_DIR)/lib/libwebp.a: $(LIBWEBP_SOURCE)
 	make
 	make install
 
+LCMS_SOURCE=lcms2-$(LCMS_VERSION).tar.gz
+
+$(LCMS_SOURCE):
+	curl -L https://github.com/mm2/Little-CMS/releases/download/lcms$(LCMS_VERSION)/lcms2-$(LCMS_VERSION).tar.gz -o $(LCMS_SOURCE)
+	
+$(CACHE_DIR)/lib/liblcms2.a: $(LCMS_SOURCE)
+	tar xf $<
+	cd lcms2-*
+	sh autogen.sh
+	$(CONFIGURE)	 
+	make
+	make install
+
+
 ## libopenjp2
 
 OPENJP2_SOURCE=openjp2-$(OPENJP2_VERSION).tar.gz
@@ -127,7 +171,10 @@ LIBS:=$(CACHE_DIR)/lib/libjpeg.a \
 	$(CACHE_DIR)/lib/libopenjp2.a \
 	$(CACHE_DIR)/lib/libtiff.a \
 	$(CACHE_DIR)/lib/libbz2.a \
-	$(CACHE_DIR)/lib/libwebp.a
+	$(CACHE_DIR)/lib/libwebp.a \
+	$(CACHE_DIR)/lib/libde265.a \
+	$(CACHE_DIR)/lib/libheif.a \
+	$(CACHE_DIR)/lib/liblcms2.a
 
 $(TARGET_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
 	tar xf $<
@@ -135,10 +182,12 @@ $(TARGET_DIR)/bin/identify: $(IMAGE_MAGICK_SOURCE) $(LIBS)
 	PKG_CONFIG_PATH=$(CACHE_DIR)/lib/pkgconfig \
 		./configure \
 		CPPFLAGS=-I$(CACHE_DIR)/include \
-		LDFLAGS=-L$(CACHE_DIR)/lib \
+		LDFLAGS="-L$(CACHE_DIR)/lib -lstdc++" \
 		--disable-dependency-tracking \
 		--disable-shared \
 		--enable-static \
+		--with-heic=yes \
+		--with-lcms=yes \
 		--prefix=$(TARGET_DIR) \
 		--enable-delegate-build \
 		--without-modules \
