@@ -5,7 +5,8 @@ Description: >
   including convert, mogrify and identify tools
   and support for jpeg, gif, png, tiff and webm formats.
 
-  Check out https://github.com/serverlesspub/imagemagick-aws-lambda-2
+  Check out https://github.com/t-kigi/imagemagick-aws-lambda-2
+  (forked from https://github.com/serverlesspub/imagemagick-aws-lambda-2 )
   for more information.
 Resources:
   ImageMagickLayer:
@@ -40,6 +41,7 @@ Metadata:
     LicenseUrl: LICENSE.txt
     ReadmeUrl: README-SAR.md 
     Labels: ['layer', 'image', 'lambda', 'imagemagick']
-    HomePageUrl: https://github.com/serverlesspub/imagemagick-aws-lambda-2
+    HomePageUrl: https://github.com/t-kigi/imagemagick-aws-lambda-2
     SemanticVersion: 1.0.0
-    SourceCodeUrl: https://github.com/serverlesspub/imagemagick-aws-lambda-2
+    SourceCodeUrl: https://github.com/t-kigi/imagemagick-aws-lambda-2
+
