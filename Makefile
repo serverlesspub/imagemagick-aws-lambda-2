@@ -34,12 +34,12 @@ result/bin/identify: all
 	#
 	# This is why we zip outside, using -y to store them as symlinks
 	
-	cd result && zip -ry /tmp/layer.zip *
+	cd result && zip -ry $@ *
 
-build/output.yaml: template.yaml /tmp/layer.zip
+/tmp/output.yaml: template.yaml /tmp/layer.zip
 	aws cloudformation package --template $< --s3-bucket $(DEPLOYMENT_BUCKET) --output-template-file $@
 
-deploy: build/output.yaml
+deploy: /tmp/output.yaml
 	aws cloudformation deploy --template $< --stack-name $(STACK_NAME)
 	aws cloudformation describe-stacks --stack-name $(STACK_NAME) --query Stacks[].Outputs --output table
 
