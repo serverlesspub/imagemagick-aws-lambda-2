@@ -13,7 +13,7 @@ Resources:
     Properties:
       LayerName: image-magick
       Description: Static build of ImageMagick for AWS Linux 2,
-      ContentUri: build/layer.zip
+      ContentUri: /tmp/layer.zip
       CompatibleRuntimes:
         - nodejs10.x
         - nodejs12.x
