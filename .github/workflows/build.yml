@@ -15,6 +15,12 @@ on:
 env:
   ENVIRONMENT: ${{ github.event.inputs.environment }}
   NEW_STACK_NAME: ${{ github.event.inputs.stackName }}
+  DEV_AWS_ACCESS_KEY_ID: ${{ secrets.GHA_DEV_AWS_ACCESS_KEY }}
+  DEV_AWS_SECRET_ACCESS_KEY: ${{ secrets.GHA_DEV_AWS_SECRET_KEY }}
+  STAGING_AWS_ACCESS_KEY_ID: ${{ secrets.GHA_STAGING_AWS_ACCESS_KEY }}
+  STAGING_AWS_SECRET_ACCESS_KEY: ${{ secrets.GHA_STAGING_AWS_SECRET_KEY }}
+  PROD_AWS_ACCESS_KEY_ID: ${{ secrets.GHA_PROD_AWS_ACCESS_KEY }}
+  PROD_AWS_SECRET_ACCESS_KEY: ${{ secrets.GHA_PROD_AWS_SECRET_KEY }}
 
 jobs:
   deploy:
