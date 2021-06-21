@@ -6,7 +6,7 @@ TARGET ?=/opt/
 MOUNTS = -v $(PROJECT_ROOT):/var/task \
 	-v $(PROJECT_ROOT)result:$(TARGET)
 
-DOCKER = docker run -it --rm -w=/var/task/build
+DOCKER = docker run -t --rm -w=/var/task/build
 build result: 
 	mkdir $@
 
