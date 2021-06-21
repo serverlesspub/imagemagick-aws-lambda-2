@@ -72,6 +72,9 @@ jobs:
         with:
           path: ".github/workflows/requirements.txt"
 
+      - name: Configure AWS Region
+        run: echo "AWS_DEFAULT_REGION=us-west-2" >> $GITHUB_ENV
+
       - name: Run deploy (default stackname)
         if: env.NEW_STACK_NAME == '-'
         shell: bash
