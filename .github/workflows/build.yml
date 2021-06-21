@@ -62,6 +62,16 @@ jobs:
             sudo ./aws/install
           fi
 
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9.0'
+
+      - name: Install python dependencies
+        uses: py-actions/py-dependency-install@v2
+        with:
+          path: ".github/workflows/requirements.txt"
+
       - name: Run deploy (default stackname)
         if: env.NEW_STACK_NAME == '-'
         shell: bash
