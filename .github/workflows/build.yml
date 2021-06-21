@@ -59,11 +59,11 @@ jobs:
       - name: Run deploy (default stackname)
         if: env.NEW_STACK_NAME == '-'
         shell: bash
-        run: !
+        run: |
           make all && make deploy DEPLOYMENT_BUCKET=pti-${{ env.ENVIRONMENT }}-cluster-assets-bucket STACK_NAME=serverlessrepo-pti-${{ env.ENVIRONMENT }}-image-magick-lambda-layer
 
       - name: Run deploy (Custom stackname)
         if: env.NEW_STACK_NAME != '-'
         shell: bash
-        run: !
+        run: |
           make all && make deploy DEPLOYMENT_BUCKET=pti-${{ env.ENVIRONMENT }}-cluster-assets-bucket STACK_NAME=${{ env.NEW_STACK_NAME }}
