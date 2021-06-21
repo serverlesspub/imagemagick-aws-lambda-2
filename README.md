@@ -7,7 +7,7 @@ Amazon Linux 2 instances for Lambda no longer contain system utilities, so `conv
 ## PTI Specific Usage
 First, make sure you have the proper amazon credentials setup. Then run: 
 ```
-make all && make deploy DEPLOYMENT_BUCKET=pti-<ENV>-cluster-assets-bucket STACK_NAME=pti-<ENV>-image-magick-lambda-layer
+make all && make deploy DEPLOYMENT_BUCKET=pti-<ENV>-cluster-assets-bucket STACK_NAME=serverlessrepo-pti-<ENV>-image-magick-lambda-layer
 ```
 
 ## Usage
