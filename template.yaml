@@ -26,6 +26,12 @@ Outputs:
     Description: Layer ARN Reference
     Value: !Ref ImageMagickLayer
 
+  StackLayerVersion:
+    Description: Layer ARN Reference
+    Value: !Ref ImageMagickLayer
+    Export:
+      Name: !Sub ${AWS::StackName}-ImageMagickLayer
+
 Metadata:
   AWS::ServerlessRepo::Application:
     Name: image-magick-lambda-layer
