@@ -34,9 +34,9 @@ build/layer.zip: result/bin/identify build
 	#
 	# This is why we zip outside, using -y to store them as symlinks
 	
-	cd result && chmod -R +w . && zip -ry $(PROJECT_ROOT)$@ *
+	cd result && zip -ry /tmp/layer.zip *
 
-build/output.yaml: template.yaml build/layer.zip
+build/output.yaml: template.yaml /tmp/layer.zip
 	aws cloudformation package --template $< --s3-bucket $(DEPLOYMENT_BUCKET) --output-template-file $@
 
 deploy: build/output.yaml
