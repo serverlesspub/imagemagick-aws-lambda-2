@@ -22,15 +22,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Inject slug/short variables
-        uses: rlespinasse/github-slug-action@v3.x
-
       - name: Checkout Branch
         uses: actions/checkout@v2
-
-      - name: Define branch
-        run: |
-          echo "BRANCH=${GITHUB_REF_SLUG}" >> $GITHUB_ENV
 
       - name: Set dev AWS credentials
         if: env.ENVIRONMENT == 'dev'
@@ -64,13 +57,13 @@ jobs:
           fi
 
       - name: Run deploy (default stackname)
-        if: ${{ env.NEW_STACK_NAME == '-' }}
+        if: env.NEW_STACK_NAME == '-'
         shell: bash
         run: !
           make all && make deploy DEPLOYMENT_BUCKET=pti-${{ env.ENVIRONMENT }}-cluster-assets-bucket STACK_NAME=serverlessrepo-pti-${{ env.ENVIRONMENT }}-image-magick-lambda-layer
 
       - name: Run deploy (Custom stackname)
-        if: ${{ env.NEW_STACK_NAME != '-' }}
+        if: env.NEW_STACK_NAME != '-'
         shell: bash
         run: !
           make all && make deploy DEPLOYMENT_BUCKET=pti-${{ env.ENVIRONMENT }}-cluster-assets-bucket STACK_NAME=${{ env.NEW_STACK_NAME }}
