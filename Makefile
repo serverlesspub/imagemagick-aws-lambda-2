@@ -27,7 +27,7 @@ STACK_NAME ?= imagemagick-layer
 
 result/bin/identify: all
 
-build/layer.zip: result/bin/identify build
+/tmp/layer.zip: result/bin/identify build
 	# imagemagick has a ton of symlinks, and just using the source dir in the template
 	# would cause all these to get packaged as individual files. 
 	# (https://github.com/aws/aws-cli/issues/2900) 
