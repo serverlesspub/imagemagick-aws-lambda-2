@@ -36,8 +36,8 @@ result/bin/identify: all
 	
 	cd result && zip -ry $@ *
 
-/tmp/output.yaml: template.yaml /tmp/layer.zip
-	aws cloudformation package --template $< --s3-bucket $(DEPLOYMENT_BUCKET) --output-template-file $@
+/tmp/output.yaml: cleanup template.yaml /tmp/layer.zip
+	aws cloudformation package --template template.yaml --s3-bucket $(DEPLOYMENT_BUCKET) --output-template-file $@
 
 deploy: /tmp/output.yaml
 	aws cloudformation deploy --template $< --stack-name $(STACK_NAME)
@@ -46,3 +46,7 @@ deploy: /tmp/output.yaml
 deploy-example: deploy
 	cd example && \
 		make deploy DEPLOYMENT_BUCKET=$(DEPLOYMENT_BUCKET) IMAGE_MAGICK_STACK_NAME=$(STACK_NAME)
+
+cleanup:
+	@echo cleaning up old files
+	rm -rf /tmp/output.yaml /tmp/layer.zip
