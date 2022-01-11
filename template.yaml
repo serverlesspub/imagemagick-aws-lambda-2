@@ -13,7 +13,7 @@ Resources:
     Properties:
       LayerName: image-magick
       Description: Static build of ImageMagick for AWS Linux 2,
-      ContentUri: build/layer.zip
+      ContentUri: /tmp/layer.zip
       CompatibleRuntimes:
         - nodejs10.x
         - nodejs12.x
@@ -25,6 +25,12 @@ Outputs:
   LayerVersion:
     Description: Layer ARN Reference
     Value: !Ref ImageMagickLayer
+
+  StackLayerVersion:
+    Description: Layer ARN Reference
+    Value: !Ref ImageMagickLayer
+    Export:
+      Name: !Sub ${AWS::StackName}-ImageMagickLayer
 
 Metadata:
   AWS::ServerlessRepo::Application:

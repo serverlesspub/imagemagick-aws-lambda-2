@@ -6,7 +6,7 @@ TARGET ?=/opt/
 MOUNTS = -v $(PROJECT_ROOT):/var/task \
 	-v $(PROJECT_ROOT)result:$(TARGET)
 
-DOCKER = docker run -it --rm -w=/var/task/build
+DOCKER = docker run -t --rm -w=/var/task/build
 build result: 
 	mkdir $@
 
@@ -27,22 +27,26 @@ STACK_NAME ?= imagemagick-layer
 
 result/bin/identify: all
 
-build/layer.zip: result/bin/identify build
+/tmp/layer.zip: result/bin/identify build
 	# imagemagick has a ton of symlinks, and just using the source dir in the template
 	# would cause all these to get packaged as individual files. 
 	# (https://github.com/aws/aws-cli/issues/2900) 
 	#
 	# This is why we zip outside, using -y to store them as symlinks
 	
-	cd result && zip -ry $(PROJECT_ROOT)$@ *
+	cd result && zip -ry $@ *
 
-build/output.yaml: template.yaml build/layer.zip
-	aws cloudformation package --template $< --s3-bucket $(DEPLOYMENT_BUCKET) --output-template-file $@
+/tmp/output.yaml: cleanup template.yaml /tmp/layer.zip
+	aws cloudformation package --template template.yaml --s3-bucket $(DEPLOYMENT_BUCKET) --output-template-file $@
 
-deploy: build/output.yaml
+deploy: /tmp/output.yaml
 	aws cloudformation deploy --template $< --stack-name $(STACK_NAME)
 	aws cloudformation describe-stacks --stack-name $(STACK_NAME) --query Stacks[].Outputs --output table
 
 deploy-example: deploy
 	cd example && \
 		make deploy DEPLOYMENT_BUCKET=$(DEPLOYMENT_BUCKET) IMAGE_MAGICK_STACK_NAME=$(STACK_NAME)
+
+cleanup:
+	@echo cleaning up old files
+	rm -rf /tmp/output.yaml /tmp/layer.zip

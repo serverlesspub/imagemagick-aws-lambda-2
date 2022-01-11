@@ -1,0 +1,88 @@
+name: Deploy Lambda Layer
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment'
+        required: true
+        default: 'dev'
+      stackName:
+        description: 'Stack name if not using default'
+        required: false
+        default: '-'
+
+env:
+  ENVIRONMENT: ${{ github.event.inputs.environment }}
+  NEW_STACK_NAME: ${{ github.event.inputs.stackName }}
+  DEV_AWS_ACCESS_KEY_ID: ${{ secrets.GHA_DEV_AWS_ACCESS_KEY }}
+  DEV_AWS_SECRET_ACCESS_KEY: ${{ secrets.GHA_DEV_AWS_SECRET_KEY }}
+  STAGING_AWS_ACCESS_KEY_ID: ${{ secrets.GHA_STAGING_AWS_ACCESS_KEY }}
+  STAGING_AWS_SECRET_ACCESS_KEY: ${{ secrets.GHA_STAGING_AWS_SECRET_KEY }}
+  PROD_AWS_ACCESS_KEY_ID: ${{ secrets.GHA_PROD_AWS_ACCESS_KEY }}
+  PROD_AWS_SECRET_ACCESS_KEY: ${{ secrets.GHA_PROD_AWS_SECRET_KEY }}
+
+jobs:
+  deploy:
+    name: Deploy the full stack to cloudformation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Branch
+        uses: actions/checkout@v2
+
+      - name: Set dev AWS credentials
+        if: env.ENVIRONMENT == 'dev'
+        run: |
+          echo "AWS_ACCESS_KEY_ID=${DEV_AWS_ACCESS_KEY_ID}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${DEV_AWS_SECRET_ACCESS_KEY}" >> $GITHUB_ENV
+
+      - name: Set staging AWS credentials
+        if: env.ENVIRONMENT == 'staging'
+        run: |
+          echo "AWS_ACCESS_KEY_ID=${STAGING_AWS_ACCESS_KEY_ID}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${STAGING_AWS_SECRET_ACCESS_KEY}" >> $GITHUB_ENV
+
+      - name: Set prod AWS credentials
+        if: env.ENVIRONMENT == 'prod'
+        run: |
+          echo "AWS_ACCESS_KEY_ID=${PROD_AWS_ACCESS_KEY_ID}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${PROD_AWS_SECRET_ACCESS_KEY}" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          echo -e "Checking for required packages...\n"
+
+          if ! command -v aws &>/dev/null; then
+            echo "AWS CLI is not installed on the host. Installing now..."
+            sudo apt -qq update
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+          fi
+
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9.0'
+
+      - name: Install python dependencies
+        uses: py-actions/py-dependency-install@v2
+        with:
+          path: ".github/workflows/requirements.txt"
+
+      - name: Configure AWS Region
+        run: echo "AWS_DEFAULT_REGION=us-west-2" >> $GITHUB_ENV
+
+      - name: Run deploy (default stackname)
+        if: env.NEW_STACK_NAME == '-'
+        shell: bash
+        run: |
+          make all && make deploy DEPLOYMENT_BUCKET=pti-${{ env.ENVIRONMENT }}-cluster-assets-bucket STACK_NAME=serverlessrepo-pti-${{ env.ENVIRONMENT }}-image-magick-lambda-layer
+
+      - name: Run deploy (Custom stackname)
+        if: env.NEW_STACK_NAME != '-'
+        shell: bash
+        run: |
+          make all && make deploy DEPLOYMENT_BUCKET=pti-${{ env.ENVIRONMENT }}-cluster-assets-bucket STACK_NAME=${{ env.NEW_STACK_NAME }}
