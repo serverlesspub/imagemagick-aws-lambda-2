@@ -1,8 +1,8 @@
 # ImageMagick for AWS Lambda
 
-Scripts to compile ImageMagick utilities for AWS Lambda instances powered by Amazon Linux 2.x, such as the `nodejs10.x` or `nodejs12.x` or `python 3.8` runtime, and the updated 2018.03 Amazon Linux 1 runtimes. 
+Scripts to compile ImageMagick utilities for AWS Lambda instances powered by Amazon Linux 2.x, such as the `nodejs10.x` or `nodejs12.x` or `python 3.8` runtime, and the updated 2018.03 Amazon Linux 1 runtimes.
 
-Amazon Linux 2 instances for Lambda no longer contain system utilities, so `convert`, `mogrify` and `identify` from the [ImageMagick](https://imagemagick.org) package are no longer available. 
+Amazon Linux 2 instances for Lambda no longer contain system utilities, so `convert`, `mogrify` and `identify` from the [ImageMagick](https://imagemagick.org) package are no longer available.
 
 ## Usage
 
@@ -14,19 +14,19 @@ For manual deployments and custom builds, read below...
 
 ## Prerequisites
 
-* Docker desktop
-* Unix Make environment
-* AWS command line utilities (just for deployment)
+- Docker desktop
+- Unix Make environment
+- AWS command line utilities (just for deployment)
 
 ## Compiling the code
 
-* start Docker services
-* `make all`
+- start Docker services
+- `make all`
 
 There are two `make` scripts in this project.
 
-* [`Makefile`](Makefile) is intended to run on the build system, and just starts a Docker container matching the AWS Linux 2 environment for Lambda runtimes to compile ImageMagick using the second script.
-* [`Makefile_ImageMagick`](Makefile_ImageMagick) is the script that will run inside the container, and actually compile binaries. 
+- [`Makefile`](Makefile) is intended to run on the build system, and just starts a Docker container matching the AWS Linux 2 environment for Lambda runtimes to compile ImageMagick using the second script.
+- [`Makefile_ImageMagick`](Makefile_ImageMagick) is the script that will run inside the container, and actually compile binaries.
 
 The output will be in the `result` dir.
 
@@ -40,8 +40,8 @@ Modify the versions of libraries or ImageMagick directly in [`Makefile_ImageMagi
 
 ### Experimenting
 
-* `make bash` to open an interactive shell with all the build directories mounted
-* `make libs` to make only the libraries, useful to test building additional libraries without building ImageMagick itself
+- `make bash` to open an interactive shell with all the build directories mounted
+- `make libs` to make only the libraries, useful to test building additional libraries without building ImageMagick itself
 
 ### Bundled libraries
 
@@ -49,11 +49,11 @@ This is not a full-blown ImageMagick setup you can expect on a regular Linux box
 
 These libraries are currently bundled:
 
-* libpng
-* libtiff
-* libjpeg
-* openjpeg2
-* libwebp
+- libpng
+- libtiff
+- libjpeg
+- openjpeg2
+- libwebp
 
 ## Deploying to AWS as a layer
 
@@ -76,14 +76,12 @@ An example project is in the [example](example) directory. It sets up two bucket
 make deploy-example DEPLOYMENT_BUCKET=<YOUR BUCKET NAME>
 ```
 
-
-
 ## Info on scripts
 
 For more information, check out:
 
-* https://imagemagick.org/script/install-source.php
-* http://www.linuxfromscratch.org/blfs/view/cvs/general/imagemagick.html
+- https://imagemagick.org/script/install-source.php
+- http://www.linuxfromscratch.org/blfs/view/cvs/general/imagemagick.html
 
 ## Author
 
@@ -91,6 +89,6 @@ Gojko Adzic <https://gojko.net>
 
 ## License
 
-* These scripts: [MIT](https://opensource.org/licenses/MIT)
-* ImageMagick: https://imagemagick.org/script/license.php
-* Contained libraries all have separate licenses, check the respective web sites for more information
+- These scripts: [MIT](https://opensource.org/licenses/MIT)
+- ImageMagick: https://imagemagick.org/script/license.php
+- Contained libraries all have separate licenses, check the respective web sites for more information
