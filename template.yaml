@@ -21,6 +21,15 @@ Resources:
       LicenseInfo: https://imagemagick.org/script/license.php
       RetentionPolicy: Retain
 
+  ImageMagickLayerPermission:
+    Type: AWS::Lambda::LayerVersionPermission
+    Condition: WritePermissions
+    Properties:
+      Action: lambda:GetLayerVersion
+      LayerVersionArn: !Ref ImageMagickLayer
+      OrganizationId: !Ref OrganizationId
+      Principal: '*'
+
 Outputs:
   LayerVersion:
     Description: Layer ARN Reference
@@ -43,3 +52,12 @@ Metadata:
     HomePageUrl: https://github.com/serverlesspub/imagemagick-aws-lambda-2
     SemanticVersion: 1.0.0
     SourceCodeUrl: https://github.com/serverlesspub/imagemagick-aws-lambda-2
+
+Parameters:
+  OrganizationId:
+    Description: Organization ID to allow access to the layer
+    Type: String
+    Default: ''
+
+Conditions:
+  WritePermissions: !Not [!Equals [!Ref OrganizationId, '']]
