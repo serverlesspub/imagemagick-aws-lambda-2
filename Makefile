@@ -24,6 +24,7 @@ all libs:
 
 
 STACK_NAME ?= imagemagick-layer
+AWS_PROFILE ?= default
 
 result/bin/identify: all
 
@@ -40,8 +41,8 @@ build/output.yaml: template.yaml build/layer.zip
 	aws cloudformation package --template $< --s3-bucket $(DEPLOYMENT_BUCKET) --output-template-file $@
 
 deploy: build/output.yaml
-	aws cloudformation deploy --template $< --stack-name $(STACK_NAME)
-	aws cloudformation describe-stacks --stack-name $(STACK_NAME) --query Stacks[].Outputs --output table
+	aws cloudformation deploy --template $< --stack-name $(STACK_NAME) --profile $(AWS_PROFILE)
+	aws cloudformation describe-stacks --stack-name $(STACK_NAME) --query Stacks[].Outputs --output table  --profile $(AWS_PROFILE)
 
 deploy-example: deploy
 	cd example && \
