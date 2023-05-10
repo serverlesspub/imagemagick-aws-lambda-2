@@ -63,6 +63,24 @@ Run the following command to deploy the compiled result as a layer in your AWS a
 make deploy DEPLOYMENT_BUCKET=<YOUR BUCKET NAME>
 ```
 
+If you would like to change the name of your stack (default: "imagemagick-layer").
+
+```
+make deploy DEPLOYMENT_BUCKET=<YOUR BUCKET NAME> STACK_NAME=<STACK NAME>
+```
+
+You can use an AWS profile when deploying.
+
+```
+make deploy DEPLOYMENT_BUCKET=<YOUR BUCKET NAME> AWS_PROFILE=<PROFILE NAME>
+```
+
+And if you would like to make your layer available to an OU you can add an organization id and the permissions will allow all accounts within that organization access.
+
+```
+make deploy DEPLOYMENT_BUCKET=<YOUR BUCKET NAME> ORGANIZATION_ID=<ORGANIZATION ID>
+```
+
 ### configuring the deployment
 
 By default, this uses imagemagick-layer as the stack name. Provide a `STACK_NAME` variable when
