@@ -38,7 +38,7 @@ Metadata:
     Author: Gojko Adzic
     SpdxLicenseId: ImageMagick
     LicenseUrl: LICENSE.txt
-    ReadmeUrl: README-SAR.md 
+    ReadmeUrl: README-SAR.md
     Labels: ['layer', 'image', 'lambda', 'imagemagick']
     HomePageUrl: https://github.com/serverlesspub/imagemagick-aws-lambda-2
     SemanticVersion: 1.0.0

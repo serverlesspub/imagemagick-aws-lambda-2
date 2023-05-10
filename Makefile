@@ -7,7 +7,7 @@ MOUNTS = -v $(PROJECT_ROOT):/var/task \
 	-v $(PROJECT_ROOT)result:$(TARGET)
 
 DOCKER = docker run -it --rm -w=/var/task/build
-build result: 
+build result:
 	mkdir $@
 
 clean:
@@ -19,21 +19,21 @@ list-formats:
 bash:
 	$(DOCKER) $(MOUNTS) --entrypoint /bin/bash -t $(DOCKER_IMAGE)
 
-all libs: 
+all libs:
 	$(DOCKER) $(MOUNTS) --entrypoint /usr/bin/make -t $(DOCKER_IMAGE) TARGET_DIR=$(TARGET) -f ../Makefile_ImageMagick $@
 
 
-STACK_NAME ?= imagemagick-layer 
+STACK_NAME ?= imagemagick-layer
 
 result/bin/identify: all
 
 build/layer.zip: result/bin/identify build
 	# imagemagick has a ton of symlinks, and just using the source dir in the template
-	# would cause all these to get packaged as individual files. 
-	# (https://github.com/aws/aws-cli/issues/2900) 
+	# would cause all these to get packaged as individual files.
+	# (https://github.com/aws/aws-cli/issues/2900)
 	#
 	# This is why we zip outside, using -y to store them as symlinks
-	
+
 	cd result && zip -ry $(PROJECT_ROOT)$@ *
 
 build/output.yaml: template.yaml build/layer.zip
