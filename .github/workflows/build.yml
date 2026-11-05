@@ -19,6 +19,10 @@ on:
         description: 'Stack name if not using default'
         required: false
         default: '-'
+      s3BucketName:
+        description: 'S3 Bucket if not using default'
+        required: false
+        default: '-'
       awsRegion:
         required: true
         description: AWS awsRegion
@@ -32,6 +36,7 @@ env:
   REASON: ${{ github.event.inputs.reason }}
   AWS_REGION: ${{ github.event.inputs.awsRegion }}
   NEW_STACK_NAME: ${{ github.event.inputs.stackName }}
+  S3_BUCKET_NAME: ${{ github.event.inputs.s3BucketName }}
   DEV_ROLE_ARN: arn:aws:iam::210944367560:role/github-actions-oidc
   STAGING_ROLE_ARN: arn:aws:iam::888736119939:role/github-actions-oidc
   PROD_ROLE_ARN: arn:aws:iam::363694354866:role/github-actions-oidc
@@ -89,14 +94,26 @@ jobs:
           role-to-assume: ${{ env.OIDC_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Run deploy (default stackname)
-        if: env.NEW_STACK_NAME == '-'
+      - name: Run deploy
         shell: bash
+        env:
+          REASON: ${{ env.REASON }}
+          REQUESTED_STACK_NAME: ${{ env.NEW_STACK_NAME }}
+          REQUESTED_BUCKET_NAME: ${{ env.S3_BUCKET_NAME }}
         run: |
-          make all && make deploy DEPLOYMENT_BUCKET=pti-${{ env.REASON }}-cluster-assets-bucket STACK_NAME=serverlessrepo-pti-${{ env.REASON }}-image-magick-lambda-layer2
+          # Inputs use '-' as the "not provided" sentinel, so resolve defaults here
+          # instead of splitting the deploy across two conditional steps.
+          if [ "$REQUESTED_STACK_NAME" = "-" ]; then
+            STACK_NAME="serverlessrepo-pti-${REASON}-image-magick-lambda-layer2"
+          else
+            STACK_NAME="$REQUESTED_STACK_NAME"
+          fi
 
-      - name: Run deploy (Custom stackname)
-        if: env.NEW_STACK_NAME != '-'
-        shell: bash
-        run: |
-          make all && make deploy DEPLOYMENT_BUCKET=pti-${{ env.REASON }}-cluster-assets-bucket STACK_NAME=${{ env.NEW_STACK_NAME }}
+          if [ "$REQUESTED_BUCKET_NAME" = "-" ]; then
+            DEPLOYMENT_BUCKET="pti-${REASON}-cluster-assets-bucket"
+          else
+            DEPLOYMENT_BUCKET="$REQUESTED_BUCKET_NAME"
+          fi
+
+          make all && make deploy DEPLOYMENT_BUCKET="$DEPLOYMENT_BUCKET" STACK_NAME="$STACK_NAME"
+
