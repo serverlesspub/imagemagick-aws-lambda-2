@@ -94,15 +94,15 @@ jobs:
           role-to-assume: ${{ env.OIDC_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Run deploy
+      - name: Resolve deployment parameters
         shell: bash
         env:
           REASON: ${{ env.REASON }}
           REQUESTED_STACK_NAME: ${{ env.NEW_STACK_NAME }}
           REQUESTED_BUCKET_NAME: ${{ env.S3_BUCKET_NAME }}
         run: |
-          # Inputs use '-' as the "not provided" sentinel, so resolve defaults here
-          # instead of splitting the deploy across two conditional steps.
+          # Inputs use '-' as the "not provided" sentinel, so resolve defaults
+          # here once and export the result to the check/deploy steps below.
           if [ "$REQUESTED_STACK_NAME" = "-" ]; then
             STACK_NAME="serverlessrepo-pti-${REASON}-image-magick-lambda-layer2"
           else
@@ -115,5 +115,41 @@ jobs:
             DEPLOYMENT_BUCKET="$REQUESTED_BUCKET_NAME"
           fi
 
+          # These values land in $GITHUB_ENV, so restrict them to the character
+          # set AWS itself accepts to keep free-text inputs from injecting
+          # newlines or extra assignments into the environment.
+          if ! [[ "$DEPLOYMENT_BUCKET" =~ ^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$ ]]; then
+            echo "::error::Invalid S3 bucket name '$DEPLOYMENT_BUCKET'. Expected 3-63 chars of lowercase letters, digits, hyphens and dots."
+            exit 1
+          fi
+
+          if ! [[ "$STACK_NAME" =~ ^[A-Za-z][A-Za-z0-9-]{0,127}$ ]]; then
+            echo "::error::Invalid CloudFormation stack name '$STACK_NAME'. Expected an alphanumeric start, then alphanumerics and hyphens (max 128 chars)."
+            exit 1
+          fi
+
+          {
+            echo "STACK_NAME=$STACK_NAME"
+            echo "DEPLOYMENT_BUCKET=$DEPLOYMENT_BUCKET"
+          } >> "$GITHUB_ENV"
+
+          echo "Stack:      $STACK_NAME"
+          echo "Bucket:     $DEPLOYMENT_BUCKET"
+
+      - name: Verify deployment bucket
+        shell: bash
+        run: |
+          # Fail in seconds, before the ~6 minute layer build, if the bucket is
+          # missing or the OIDC role cannot reach it.
+          echo "Checking s3://$DEPLOYMENT_BUCKET ..."
+          if ! aws s3api head-bucket --bucket "$DEPLOYMENT_BUCKET"; then
+            echo "::error::Bucket '$DEPLOYMENT_BUCKET' does not exist, or role '$OIDC_ROLE_ARN' cannot access it in $AWS_DEFAULT_REGION. Aborting before the layer build."
+            exit 1
+          fi
+          echo "Bucket reachable."
+
+      - name: Run deploy
+        shell: bash
+        run: |
           make all && make deploy DEPLOYMENT_BUCKET="$DEPLOYMENT_BUCKET" STACK_NAME="$STACK_NAME"
 
